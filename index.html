@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lnk forge</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- everything here is intentionally lowercase, plain, and boxy -->
+
+<table id="frame" width="720" cellpadding="0" cellspacing="0" border="0" align="center">
+<tr><td>
+
+  <div id="banner">lnk forge</div>
+  <div id="tagline">turn any file into a genuine windows shortcut (.lnk)</div>
+
+  <hr>
+
+  <table width="100%" cellpadding="4" cellspacing="0" border="0">
+
+    <tr>
+      <td class="lbl" width="200">source file (optional)</td>
+      <td>
+        <input type="file" id="pick">
+        <div class="hint">picking a file just fills in the name below. browsers hide the real disk path for privacy, so type the full target path yourself.</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">target path <b>*</b></td>
+      <td>
+        <input type="text" id="target" size="60" placeholder="c:\program files\thing\thing.exe" spellcheck="false">
+        <div class="hint">the file, folder, or program the shortcut opens. absolute path.</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">shortcut name</td>
+      <td>
+        <input type="text" id="name" size="40" placeholder="my shortcut" spellcheck="false">
+        <span class="fixedext">.lnk</span>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">arguments</td>
+      <td>
+        <input type="text" id="args" size="60" placeholder="--flag value" spellcheck="false">
+        <div class="hint">command line passed to the target.</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">working directory</td>
+      <td>
+        <input type="text" id="workdir" size="60" placeholder="c:\program files\thing" spellcheck="false">
+        <div class="hint">leave blank to derive it from the target path.</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">icon location</td>
+      <td>
+        <input type="text" id="iconpath" size="48" placeholder="c:\windows\system32\shell32.dll" spellcheck="false">
+        &nbsp;index
+        <input type="text" id="iconindex" size="4" value="0" spellcheck="false">
+        <div class="hint">optional. path to a file holding the icon, plus the icon index inside it.</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">description / tooltip</td>
+      <td>
+        <input type="text" id="desc" size="60" placeholder="opens the thing" spellcheck="false">
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">hotkey</td>
+      <td>
+        <select id="hkmod">
+          <option value="0">(none)</option>
+          <option value="2">ctrl +</option>
+          <option value="4">alt +</option>
+          <option value="1">shift +</option>
+          <option value="6">ctrl + alt +</option>
+          <option value="3">ctrl + shift +</option>
+        </select>
+        <select id="hkkey">
+          <option value="0">(none)</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">window state</td>
+      <td>
+        <select id="showcmd">
+          <option value="1">normal</option>
+          <option value="3">maximized</option>
+          <option value="7">minimized</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">flags</td>
+      <td>
+        <label><input type="checkbox" id="admin"> run as administrator</label>
+        &nbsp;&nbsp;
+        <label><input type="checkbox" id="relpath" checked> embed relative path hint</label>
+        &nbsp;&nbsp;
+        <label><input type="checkbox" id="idlist" checked> build target id list</label>
+        <div class="hint">the id list is the pidl trail (my computer &rarr; drive &rarr; folders &rarr; file) explorer prefers when resolving. only drive-rooted targets get one; link info still carries the full path either way.</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="lbl">&nbsp;</td>
+      <td>
+        <input type="button" id="make" value="build shortcut">
+        <input type="button" id="preview" value="preview bytes">
+        <span id="status"></span>
+      </td>
+    </tr>
+
+  </table>
+
+  <hr>
+
+  <div class="lbl2">byte preview (hex)</div>
+  <pre id="hex" class="hexbox">nothing built yet.</pre>
+
+  <hr>
+
+  <div class="lbl2">decode / inspect a .lnk</div>
+  <table width="100%" cellpadding="4" cellspacing="0" border="0">
+    <tr>
+      <td class="lbl" width="200">read a .lnk file</td>
+      <td>
+        <input type="file" id="decpick" accept=".lnk">
+        <input type="button" id="decode" value="decode">
+        <div class="hint">reads the bytes in your browser and lays out every field. nothing leaves the page.</div>
+      </td>
+    </tr>
+  </table>
+  <pre id="report" class="hexbox">no file decoded yet.</pre>
+
+  <hr>
+
+  <div class="lbl2">what this makes</div>
+  <div class="notes">
+    a real shell link binary file. the header carries the class id
+    <span class="mono">00021401-0000-0000-c000-000000000046</span>, optionally followed by a
+    link-target id list (the pidl trail), then a link-info block holding a volume id and both
+    ansi and unicode copies of the base path, then the unicode string data section (name,
+    relative path, working dir, arguments, icon), and a terminal block. embedded times are
+    left unset. no server touches the file &mdash; it is assembled in your browser and handed
+    straight to a download, and the decoder above reads one back the same way.
+  </div>
+
+</td></tr>
+</table>
+
+<div id="foot">lnk forge &mdash; a small offline tool. no uploads, no tracking.</div>
+
+<script src="lnk.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
